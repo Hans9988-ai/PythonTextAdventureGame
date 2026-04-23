@@ -18,6 +18,8 @@
 # - if / elif / else logic
 # - user input and string handling
 # ============================================================
+# Author note: if the commits look weird, it's because I am weird. I try to do things one by one off screen then add it into script haha.
+# ============================================================
 
 
 # This dictionary stores the player's current game data.
@@ -63,3 +65,52 @@ def get_choice(prompt, valid_choices):
         else:
             print("\nInvalid choice.")
             print("Please choose from:", ", ".join(valid_choices))
+
+
+def intro():
+    """
+    Introduces the setting, mission, and player role.
+    """
+    print("=" * 55)
+    print("                 OPERATION MIDNIGHT")
+    print("=" * 55)
+    print("France, 1944.")
+    print("You are a resistance courier operating behind enemy lines.")
+    print("Your mission is to recover stolen military documents")
+    print("from a ruined enemy office before they are moved by dawn.\n")
+
+    player["name"] = input("Enter your name: ").strip()
+
+    # Assign a default name if the player enters nothing.
+    if player["name"] == "":
+        player["name"] = "Courier"
+
+    print(f"\nGood luck, {player['name']}. The mission begins now.\n")
+
+
+def road():
+    """
+    Main hub area. The player can move to the safehouse, bunker,
+    or final office location from here.
+    """
+    player["location"] = "road"
+    print("\nYou stand on a dark country road outside an occupied village.")
+    print("Nearby are a resistance safehouse, an enemy bunker, and a ruined office.")
+
+    while player["location"] == "road" and not player["game_over"]:
+        print("\nChoices: look, go safehouse, go bunker, go office, status")
+        choice = get_choice(
+            "What do you do? ",
+            ["look", "go safehouse", "go bunker", "go office", "status"]
+        )
+
+        if choice == "look":
+            print("You study the area and notice fresh boot prints in the mud.")
+        elif choice == "go safehouse":
+            safehouse()
+        elif choice == "go bunker":
+            bunker()
+        elif choice == "go office":
+            office()
+        elif choice == "status":
+            show_status()
