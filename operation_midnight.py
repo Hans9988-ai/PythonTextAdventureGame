@@ -250,3 +250,83 @@ def office():
                 tragic_ending()
         elif choice == "status":
             show_status()
+
+
+def heroic_ending():
+    """
+    The player succeeds through courage and strength.
+    """
+    print("\n" + "=" * 55)
+    print("HEROIC ENDING")
+    print("=" * 55)
+    print(f"{player['name']} seizes the documents and escapes through the ruins.")
+    print("Though the mission was dangerous, the intelligence reaches the resistance.")
+    print("Your courage helps change the course of the operation.")
+    player["game_over"] = True
+
+
+def clever_ending():
+    """
+    The player succeeds by using strategy instead of force.
+    """
+    print("\n" + "=" * 55)
+    print("CLEVER ENDING")
+    print("=" * 55)
+    print(f"{player['name']} uses quick thinking to distract the officer")
+    print("and recover the documents without direct confrontation.")
+    print("The mission is completed through intelligence and composure.")
+    player["game_over"] = True
+
+
+def true_ending():
+    """
+    The best ending. The player resolves the conflict with calm judgment.
+    """
+    print("\n" + "=" * 55)
+    print("TRUE ENDING")
+    print("=" * 55)
+    print(f"{player['name']} speaks calmly and convinces the officer")
+    print("that the battle is already lost and further resistance is pointless.")
+    print("In a rare moment of humanity, the officer steps aside.")
+    print("You leave with the documents, completing the mission without violence.")
+    player["documents"] = True
+    player["game_over"] = True
+
+
+def tragic_ending():
+    """
+    A partial success ending. The player gets the documents but pays a cost.
+    """
+    print("\n" + "=" * 55)
+    print("TRAGIC ENDING")
+    print("=" * 55)
+    print(f"{player['name']} manages to grab the documents,")
+    print("but is wounded while escaping the office.")
+    print("The mission succeeds, but at a heavy personal cost.")
+    player["documents"] = True
+    player["game_over"] = True
+
+
+def bad_ending_defeat():
+    """
+    Failure ending if the player's health reaches zero.
+    """
+    print("\n" + "=" * 55)
+    print("MISSION FAILED")
+    print("=" * 55)
+    print(f"{player['name']} collapses before completing the mission.")
+    print("The documents remain in enemy hands.")
+    player["game_over"] = True
+
+
+def main():
+    """
+    Starts the game and sends the player into the first area.
+    """
+    intro()
+    road()
+    print("\nThank you for playing Operation Midnight.")
+
+
+# This line starts the game when the file is run.
+main()
