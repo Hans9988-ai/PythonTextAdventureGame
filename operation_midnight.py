@@ -23,6 +23,7 @@
 
 
 # This dictionary stores the player's current game data.
+# Stores all player-related game data, including ending result.
 player = {
     "name": "",
     "health": 100,
@@ -30,8 +31,24 @@ player = {
     "inventory": [],
     "documents": False,
     "officer_distracted": False,
-    "game_over": False
+    "game_over": False,
+    "ending": ""  # Tracks which ending the player achieved
 }
+
+
+def reset_player():
+    """
+    Resets all player data to its initial state.
+    This allows the game to restart cleanly for a replay.
+    """
+    player["name"] = ""
+    player["health"] = 100
+    player["location"] = "road"
+    player["inventory"] = []
+    player["documents"] = False
+    player["officer_distracted"] = False
+    player["game_over"] = False
+    player["ending"] = ""
 
 # This list stores the major locations in the game.
 locations = ["road", "safehouse", "bunker", "office"]
@@ -254,79 +271,118 @@ def office():
 
 def heroic_ending():
     """
-    The player succeeds through courage and strength.
+    Successful ending achieved through combat and high health.
     """
     print("\n" + "=" * 55)
     print("HEROIC ENDING")
     print("=" * 55)
-    print(f"{player['name']} seizes the documents and escapes through the ruins.")
-    print("Though the mission was dangerous, the intelligence reaches the resistance.")
-    print("Your courage helps change the course of the operation.")
-    player["game_over"] = True
+    print(f"{player['name']} escapes with the documents after a direct confrontation.")
+    print("The mission succeeds due to bravery under pressure.")
+    
+    player["documents"] = True          # Marks mission success
+    player["ending"] = "Heroic Ending"  # Stores ending type
+    player["game_over"] = True          # Stops the game loop
 
 
 def clever_ending():
     """
-    The player succeeds by using strategy instead of force.
+    Successful ending achieved by distracting the officer.
     """
     print("\n" + "=" * 55)
     print("CLEVER ENDING")
     print("=" * 55)
-    print(f"{player['name']} uses quick thinking to distract the officer")
-    print("and recover the documents without direct confrontation.")
-    print("The mission is completed through intelligence and composure.")
+    print(f"{player['name']} creates a distraction and retrieves the documents unnoticed.")
+    print("The mission is completed through strategy and awareness.")
+    
+    player["documents"] = True
+    player["ending"] = "Clever Ending"
     player["game_over"] = True
 
 
 def true_ending():
     """
-    The best ending. The player resolves the conflict with calm judgment.
+    Best ending achieved through negotiation rather than conflict.
     """
     print("\n" + "=" * 55)
     print("TRUE ENDING")
     print("=" * 55)
-    print(f"{player['name']} speaks calmly and convinces the officer")
-    print("that the battle is already lost and further resistance is pointless.")
-    print("In a rare moment of humanity, the officer steps aside.")
-    print("You leave with the documents, completing the mission without violence.")
+    print(f"{player['name']} calmly convinces the officer to stand down.")
+    print("The documents are recovered without violence.")
+    
     player["documents"] = True
+    player["ending"] = "True Ending"
     player["game_over"] = True
 
 
 def tragic_ending():
     """
-    A partial success ending. The player gets the documents but pays a cost.
+    Partial success: documents are recovered, but the player is injured.
     """
     print("\n" + "=" * 55)
     print("TRAGIC ENDING")
     print("=" * 55)
-    print(f"{player['name']} manages to grab the documents,")
-    print("but is wounded while escaping the office.")
-    print("The mission succeeds, but at a heavy personal cost.")
+    print(f"{player['name']} escapes with the documents but is seriously wounded.")
+    print("The mission succeeds, but at a significant cost.")
+    
     player["documents"] = True
+    player["ending"] = "Tragic Ending"
     player["game_over"] = True
 
 
 def bad_ending_defeat():
     """
-    Failure ending if the player's health reaches zero.
+    Failure ending triggered when the player's health reaches zero.
     """
     print("\n" + "=" * 55)
     print("MISSION FAILED")
     print("=" * 55)
-    print(f"{player['name']} collapses before completing the mission.")
+    print(f"{player['name']} is unable to complete the mission.")
     print("The documents remain in enemy hands.")
+    
+    player["ending"] = "Mission Failed"
     player["game_over"] = True
+    
+def end_menu():
+    """
+    Displays the ending reached and asks the player whether to
+    replay the game or quit. Returns True if replaying.
+    """
+    print("\n" + "=" * 55)
+    print("GAME OVER")
+    print("=" * 55)
+    print(f"You reached: {player['ending']}")
+    print("=" * 55)
+
+    while True:
+        # Gets the player's choice for next action
+        choice = input("Type 'replay' to play again or 'quit' to exit: ").strip().lower()
+
+        if choice == "replay":
+            return True   # Restart game loop
+        elif choice == "quit":
+            print("\nThank you for playing Operation Midnight.")
+            return False  # Exit game loop
+        else:
+            print("Invalid input. Please type 'replay' or 'quit'.")
 
 
 def main():
     """
-    Starts the game and sends the player into the first area.
+    Controls the full game cycle:
+    - Starts the game
+    - Runs gameplay
+    - Displays ending
+    - Repeats if player chooses replay
     """
-    intro()
-    road()
-    print("\nThank you for playing Operation Midnight.")
+    while True:
+        reset_player()  # Clears previous game data
+        intro()         # Starts introduction
+        road()          # Begins main gameplay loop
+
+        # After the game ends, ask if player wants to replay
+        if not end_menu():
+            break       # Exit loop if player chooses to quit
 
 
-# This line starts the game when the file is run.
+# Starts the program when the file is executed
 main()
