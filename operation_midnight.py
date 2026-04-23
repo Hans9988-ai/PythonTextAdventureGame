@@ -114,3 +114,139 @@ def road():
             office()
         elif choice == "status":
             show_status()
+
+
+def safehouse():
+    """
+    Preparation area. The player can gather equipment and receive
+    guidance before entering more dangerous locations.
+    """
+    player["location"] = "safehouse"
+    print("\nYou enter the resistance safehouse.")
+    print("Inside, maps, radios, and supply crates fill the dim room.")
+
+    while player["location"] == "safehouse" and not player["game_over"]:
+        print("\nChoices: talk, take flashlight, take medkit, return, status")
+        choice = get_choice(
+            "What do you do? ",
+            ["talk", "take flashlight", "take medkit", "return", "status"]
+        )
+
+        if choice == "talk":
+            print("A resistance leader whispers,")
+            print("'The bunker may contain the keycard needed to enter the office.'")
+        elif choice == "take flashlight":
+            if "flashlight" not in player["inventory"]:
+                player["inventory"].append("flashlight")
+                print("You take a flashlight.")
+            else:
+                print("You already took the flashlight.")
+        elif choice == "take medkit":
+            if "medkit" not in player["inventory"]:
+                player["inventory"].append("medkit")
+                print("You take a medkit.")
+            else:
+                print("You already took the medkit.")
+        elif choice == "return":
+            road()
+        elif choice == "status":
+            show_status()
+
+
+def bunker():
+    """
+    Secondary mission area. The player can find the keycard here,
+    but entering unprepared may cause damage.
+    """
+    player["location"] = "bunker"
+    print("\nYou slip into the enemy bunker under cover of darkness.")
+
+    # The flashlight helps the player avoid injury in the dark bunker.
+    if "flashlight" not in player["inventory"]:
+        print("Without a flashlight, you stumble through the dark and hit exposed metal.")
+        player["health"] -= 20
+        print("You lost 20 health.")
+
+        if player["health"] <= 0:
+            bad_ending_defeat()
+            return
+
+    while player["location"] == "bunker" and not player["game_over"]:
+        print("\nChoices: search, use medkit, inspect, return, status")
+        choice = get_choice(
+            "What do you do? ",
+            ["search", "use medkit", "inspect", "return", "status"]
+        )
+
+        if choice == "search":
+            if "keycard" not in player["inventory"]:
+                player["inventory"].append("keycard")
+                print("You search a locker and find an enemy keycard.")
+            else:
+                print("You already found the keycard here.")
+        elif choice == "use medkit":
+            if "medkit" in player["inventory"]:
+                player["inventory"].remove("medkit")
+                player["health"] += 20
+                if player["health"] > 100:
+                    player["health"] = 100
+                print("You use the medkit and recover 20 health.")
+            else:
+                print("You do not have a medkit.")
+        elif choice == "inspect":
+            print("You overhear that the stolen documents are still inside the ruined office.")
+        elif choice == "return":
+            road()
+        elif choice == "status":
+            show_status()
+
+
+def office():
+    """
+    Final mission area. The player must have the keycard to enter.
+    Different choices here determine the ending.
+    """
+    player["location"] = "office"
+    print("\nYou approach the ruined enemy office.")
+
+    # Require the keycard before allowing the player to continue.
+    if "keycard" not in player["inventory"]:
+        print("The locked entrance will not open. You need a keycard.")
+        road()
+        return
+
+    print("You unlock the door and step inside.")
+    print("The documents are on a desk, but an enemy officer notices you.")
+
+    while player["location"] == "office" and not player["game_over"]:
+        print("\nChoices: fight, distract, negotiate, take documents, status")
+        choice = get_choice(
+            "What do you do? ",
+            ["fight", "distract", "negotiate", "take documents", "status"]
+        )
+
+        if choice == "fight":
+            print("You lunge at the officer in a desperate struggle.")
+            player["health"] -= 30
+            print("You lost 30 health.")
+
+            if player["health"] <= 0:
+                bad_ending_defeat()
+            else:
+                print("You force the officer back, but the room is still dangerous.")
+        elif choice == "distract":
+            print("You throw debris across the room, drawing the officer's attention away.")
+            player["officer_distracted"] = True
+        elif choice == "negotiate":
+            true_ending()
+        elif choice == "take documents":
+            if player["officer_distracted"]:
+                player["documents"] = True
+                clever_ending()
+            elif player["health"] >= 70:
+                player["documents"] = True
+                heroic_ending()
+            else:
+                tragic_ending()
+        elif choice == "status":
+            show_status()
